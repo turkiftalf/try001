@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="night" data-color="blue">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لانشرنا - Android Car Launcher</title>
+<style>
+  :root {
+    --bg-main: #0f1115;
+    --bg-panel: #12151c;
+    --card-bg: #161a23;
+    --card-hover: #1f2736;
+    --item-bg: #1b222d;
+    --border-color: #283447;
+    --accent-color: #00b0ff;
+    --accent-hover: #0091ea;
+    --text-main: #ffffff;
+    --text-muted: #aaa;
+    --accent-glow: rgba(0, 176, 255, 0.3);
+  }
+
+  [data-color="green"] { --accent-color: #00e676; --accent-hover: #00c853; --accent-glow: rgba(0, 230, 118, 0.3); }
+  [data-color="red"] { --accent-color: #ff1744; --accent-hover: #d50000; --accent-glow: rgba(255, 23, 68, 0.3); }
+  [data-color="amber"] { --accent-color: #ff9100; --accent-hover: #ff6d00; --accent-glow: rgba(255, 145, 0, 0.3); }
+  [data-color="silver"] { --accent-color: #e0e0e0; --accent-hover: #bdbdbd; --accent-glow: rgba(224, 224, 224, 0.3); }
+
+  [data-theme="day"] {
+    --bg-main: #e2e8f0;
+    --bg-panel: #f8fafc;
+    --card-bg: #ffffff;
+    --card-hover: #f1f5f9;
+    --item-bg: #edf2f7;
+    --border-color: #cbd5e1;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+  body { background: #050505; color: var(--text-main); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  
+  .car-frame { width: 96vw; height: 92vh; max-width: 1280px; max-height: 720px; background: var(--bg-main); border-radius: 18px; border: 3px solid var(--border-color); display: flex; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.9); position: relative; transition: transform 0.4s ease-in-out, background 0.3s; }
+  
+  /* Side Swipe Dashboard Screen */
+  .side-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 150; display: flex; flex-direction: column; justify-content: space-between; padding: 25px; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .side-screen.active { transform: translateX(0); }
+  [dir="ltr"] .side-screen { transform: translateX(-100%); }
+  [dir="ltr"] .side-screen.active { transform: translateX(0); }
+
+  .side-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+  .side-clock { font-size: 50px; font-weight: bold; color: var(--text-main); letter-spacing: 2px; }
+  .side-dates { text-align: left; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+  [dir="ltr"] .side-dates { text-align: right; }
+
+  .side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 52vh; }
+  .side-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+  .side-card-title { font-size: 14px; color: var(--accent-color); font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+  .media-info { font-size: 16px; font-weight: bold; color: var(--text-main); margin-bottom: 12px; }
+  .media-controls { display: flex; gap: 12px; }
+  .control-btn { flex: 1; background: var(--item-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+  .control-btn:hover { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
+
+  .side-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 12px; }
+  .back-to-main-btn { background: var(--item-bg); border: 1px solid var(--border-color); color: var(--accent-color); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .back-to-main-btn:hover { background: var(--card-hover); }
+
+  /* Compass Widget inside Side Screen */
+  .side-compass-box { display: flex; align-items: center; justify-content: space-between; background: var(--item-bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 5px; }
+
+  /* Startup Modal */
+  .startup-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 10, 0.95); z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+  .startup-box { background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 16px; padding: 25px; max-width: 600px; width: 100%; box-shadow: 0 10px 30px var(--accent-glow); position: relative; }
+  .startup-title { font-size: 18px; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; }
+  .startup-text { font-size: 15px; color: var(--text-main); line-height: 1.7; margin-bottom: 20px; }
+  .startup-btn { background: var(--accent-color); color: #000; border: none; padding: 8px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+  .startup-btn:hover { background: var(--accent-hover); }
+  .countdown-badge { position: absolute; top: 15px; left: 15px; background: var(--item-bg); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; color: var(--accent-color); font-weight: bold; }
+  [dir="ltr"] .countdown-badge { left: auto; right: 15px; }
+
+  /* Left Dashboard Panel (60%) */
+  .dash-panel { width: 60%; padding: 14px 18px; display: flex; flex-direction: column; justify-content: space-between; background: var(--bg-panel); height: 100%; overflow: hidden; transition: background 0.3s; }
+  
+  .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+  .clock-area { display: flex; align-items: baseline; gap: 8px; }
+  .clock { font-size: 32px; font-weight: bold; letter-spacing: 1px; color: var(--text-main); }
+  .ampm { font-size: 14px; color: var(--text-muted); }
+
+  .dates-comp-group { display: flex; align-items: center; gap: 10px; }
+  .comp-box { background: var(--item-bg); padding: 5px 10px; border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); text-align: center; }
+  .qibla-val { color: var(--accent-color); font-weight: bold; display: block; }
+  .dates { text-align: right; font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+  [dir="ltr"] .dates { text-align: left; }
+
+  /* Prayer & Location Card */
+  .prayer-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; margin: 6px 0; }
+  .loc-header { display: flex; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; justify-content: space-between; }
+  .loc-name { color: var(--accent-color); font-weight: bold; font-size: 12px; }
+  .prayer-grid { display: flex; justify-content: space-between; text-align: center; }
+  .p-item { flex: 1; padding: 2px; border-radius: 6px; }
+  .p-item.active { background: var(--card-hover); border: 1px solid var(--accent-color); }
+  .p-name { font-size: 10px; color: var(--text-muted); }
+  .p-time { font-size: 12px; font-weight: bold; margin-top: 1px; color: var(--text-main); }
+
+  /* Apps Grid */
+  .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .app-icon { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; position: relative; }
+  .app-icon:hover { background: var(--card-hover); border-color: var(--accent-color); }
+  .icon-img { font-size: 22px; margin-bottom: 3px; }
+  .app-label { font-size: 11px; color: var(--text-main); font-weight: 500; text-align: center; }
+  .edit-hint { position: absolute; top: 4px; right: 6px; font-size: 9px; color: var(--text-muted); opacity: 0.5; }
+  [dir="ltr"] .edit-hint { right: auto; left: 6px; }
+
+  /* Right Map Panel (40%) */
+  .nav-panel { width: 40%; background: var(--bg-panel); border-left: 2px solid var(--border-color); position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; cursor: pointer; transition: 0.2s; }
+  .nav-panel:hover { border-color: var(--accent-color); }
+  [dir="ltr"] .nav-panel { border-left: none; border-right: 2px solid var(--border-color); }
+  .map-bg { position: absolute; top:0; left:0; width:100%; height:100%; opacity: 0.25; background: radial-gradient(circle at 50% 50%, var(--accent-color) 0%, var(--bg-main) 100%); z-index: 1; }
+  .nav-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+  .speedo { background: rgba(0,0,0,0.6); padding: 12px 20px; border-radius: 40px; border: 1px solid var(--border-color); width: fit-content; }
+  .speed-val { font-size: 34px; font-weight: bold; color: #00e676; }
+  .speed-unit { font-size: 12px; color: var(--text-muted); margin-right: 4px; }
+  [dir="ltr"] .speed-unit { margin-right: 0; margin-left: 4px; }
+  .map-edit-hint { position: absolute; top: 12px; left: 12px; font-size: 10px; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 6px; color: var(--text-muted); border: 1px solid var(--border-color); z-index: 3; }
+
+  /* Blackout Mode */
+  .blackout-screen { position: absolute; top:0; left:0; width:100%; height:100%; background: #000; z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+  .blackout-clock { font-size: 76px; color: #222; font-weight: bold; }
+  .blackout-dates { margin-top: 15px; text-align: center; font-size: 16px; color: #333; line-height: 1.5; }
+  .blackout-note { position: absolute; bottom: 25px; font-size: 11px; color: #222; }
+
+  /* Modals */
+  .modal { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-content { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; width: 100%; max-width: 500px; padding: 20px; text-align: inherit; max-height: 85vh; overflow-y: auto; }
+  .modal-title { font-size: 18px; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+  .dua-item { margin-bottom: 12px; font-size: 13px; color: var(--text-main); background: var(--item-bg); padding: 10px; border-radius: 8px; line-height: 1.6; }
+  .modal-close-btn { background: var(--accent-color); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; }
+  .modal-close-btn:hover { background: var(--accent-hover); }
+
+  .settings-row { margin-bottom: 12px; }
+  .settings-label { font-size: 13px; font-weight: bold; margin-bottom: 6px; color: var(--text-muted); display: block; }
+  .options-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt-btn { flex: 1; min-width: 80px; padding: 8px; background: var(--item-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; }
+  .opt-btn.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
+
+  .app-picker-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-top: 10px; }
+  .app-picker-item { background: var(--item-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+  .app-picker-item:hover { background: var(--card-hover); border-color: var(--accent-color); }
+
+  .about-box { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; font-size: 11px; color: var(--text-muted); line-height: 1.6; margin-top: 15px; text-align: center; }
+  .tips-box { background: rgba(0, 176, 255, 0.1); border: 1px dashed var(--accent-color); border-radius: 8px; padding: 10px; font-size: 11px; color: var(--text-main); margin-bottom: 12px; line-height: 1.5; }
+</style>
+</head>
+<body id="mainBody">
+
+<div class="car-frame" id="carFrame">
+
+  <!-- SIDE SWIPE DASHBOARD SCREEN -->
+  <div class="side-screen" id="sideScreen">
+    <div class="side-top">
+      <div>
+        <div class="side-clock" id="sideClock">11:00</div>
+      </div>
+      <div class="side-dates">
+        <div id="sideDateMiladi">--</div>
+        <div id="sideDateHijri" style="color: var(--accent-color);">--</div>
+      </div>
+    </div>
+
+    <div class="side-grid">
+      <!-- Card 1: Now Playing Media & Controls -->
+      <div class="side-card">
+        <div>
+          <div class="side-card-title">🎵 الوسائط الحية (Now Playing)</div>
+          <div class="media-info" id="mediaTitleDisplay">تلاوة سورة الكهف - الشيخ عبد الباسط</div>
+        </div>
+        <div class="media-controls">
+          <button class="control-btn" onclick="togglePlayPause()">⏸️ إيقاف / تشغيل</button>
+          <button class="control-btn" onclick="toggleMuteAudio()">🔇 كتم الصوت</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Navigation Guidance, Compass & Next Prayer Countdown -->
+      <div class="side-card">
+        <div>
+          <div class="side-card-title">
+            <span>🧭 البوصلة واتجاه القبلة</span>
+            <span style="font-size: 11px; color: var(--accent-color);" id="sideCompassDeg">0° شمال</span>
+          </div>
+          <div class="side-compass-box">
+            <span style="font-size: 12px;" id="sideQiblaText">اتجاه القبلة:</span>
+            <strong style="font-size: 13px; color: var(--accent-color);" id="sideQiblaDirVal">204° ↗</strong>
+          </div>
+          <div style="font-size: 13px; font-weight: bold; margin-top: 12px;" id="sideNextPrayerInfo">باقي على صلاة العصر: ساعة و 15 دقيقة</div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted);">اسحب يساراً للعودة للرئيسية</div>
+      </div>
+    </div>
+
+    <div class="side-footer">
+      <div>لانشرنا • نظام القيادة الذكي</div>
+      <button class="back-to-main-btn" onclick="toggleSideScreen(false)">العودة للرئيسية ⬅</button>
+    </div>
+  </div>
+  
+  <!-- Startup Supplication Modal -->
+  <div class="startup-modal" id="startupModal">
+    <div class="startup-box">
+      <div class="countdown-badge" id="countdownBadge">20 ثانية</div>
+      <div class="startup-title" id="startTitle">دعاء الخروج والركوب</div>
+      <div class="startup-text" id="startText">
+        «بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ»<br><br>
+        «سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ»
+      </div>
+      <button class="startup-btn" id="startBtn" onclick="closeStartupModal()">انطلاق (إغلاق فوري)</button>
+    </div>
+  </div>
+
+  <!-- Supplications Modal -->
+  <div class="modal" id="duaModal">
+    <div class="modal-content">
+      <div class="modal-title" id="duaModalTitle">الأدعية وأذكار الصباح والمساء</div>
+      <div class="dua-item"><strong id="d1Title">دعاء ركوب الدابة:</strong> <span id="d1Text">«الحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ»</span></div>
+      <div class="dua-item"><strong id="d2Title">دعاء السفر:</strong> <span id="d2Text">«اللَّهُمَّ إنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا البِرَّ والتَّقْوَى، ومِنَ العَمَلِ مَا تَرْضَى»</span></div>
+      <div class="dua-item"><strong id="d3Title">دعاء الخروج من المنزل:</strong> <span id="d3Text">«بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ»</span></div>
+      <div class="dua-item"><strong id="d4Title">أذكار الصباح والمساء:</strong> <span id="d4Text">«أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير»</span></div>
+      <button class="modal-close-btn" onclick="toggleDuaModal()" id="duaCloseBtn">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-title" id="settingsTitle">الإعدادات / Settings</div>
+      
+      <div class="tips-box" id="tipsBox">
+        💡 <strong>تنبيه الاستخدام:</strong> اسحب يميناً أو يساراً في الشاشة للوصول لشاشة المساعد الجانبية السريعة. ولتغيير أي زر أو خريطة، اضغط مطولاً عليها.
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label" id="lblLangSetting">لغة الواجهة / Interface Language</span>
+        <div class="options-group">
+          <button class="opt-btn active" id="btnLangAr" onclick="setLanguage('ar')">العربية</button>
+          <button class="opt-btn" id="btnLangEn" onclick="setLanguage('en')">English</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label" id="lblModeSetting">نمط الإضاءة / Lighting Mode</span>
+        <div class="options-group">
+          <button class="opt-btn" id="btnModeNight" onclick="setThemeMode('night')">ليلي 🌙</button>
+          <button class="opt-btn" id="btnModeDay" onclick="setThemeMode('day')">نهاري ☀️</button>
+          <button class="opt-btn active" id="btnModeAuto" onclick="setThemeMode('auto')">تلقائي ⚙️</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label" id="lblColorSetting">لون الثيم والطبلون / Dashboard Theme Color</span>
+        <div class="options-group">
+          <button class="opt-btn active" onclick="setColorTheme('blue', this)">أزرق</button>
+          <button class="opt-btn" onclick="setColorTheme('green', this)">أخضر</button>
+          <button class="opt-btn" onclick="setColorTheme('red', this)">أحمر</button>
+          <button class="opt-btn" onclick="setColorTheme('amber', this)">كهرماني</button>
+          <button class="opt-btn" onclick="setColorTheme('silver', this)">فضي</button>
+        </div>
+      </div>
+
+      <div class="about-box" id="aboutBox">
+        <strong>اسم اللانشر:</strong> لانشرنا<br>
+        هذا العمل لوجه الله ولا أحلل استخدامه تجارياً، ويمكن الحصول عليه مجاناً من خلال الإنترنت. لطلب رابط التحميل تواصل على جوال <strong>00966556156525</strong> أو عبر التواصل الاجتماعي <strong>@turkiftalf</strong>.
+      </div>
+
+      <button class="modal-close-btn" onclick="toggleSettingsModal()" id="settingsCloseBtn">إغلاق / Close</button>
+    </div>
+  </div>
+
+  <!-- App Picker Modal -->
+  <div class="modal" id="appPickerModal">
+    <div class="modal-content">
+      <div class="modal-title" id="pickerTitle">ربط تطبيق بالزر (ضغط مطول)</div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" id="pickerSub">اختر التطبيق المراد فتحه عند النقر على هذا العنصر:</div>
+      <div class="app-picker-list" id="appPickerList">
+        <div class="app-picker-item" onclick="selectAppForButton('here', 'خرائط HERE أوفلاين', '🧭')"><span>🧭 خرائط HERE WeGo (أوفلاين)</span></div>
+        <div class="app-picker-item" onclick="selectAppForButton('maps', 'خرائط جوجل', '🗺️')"><span>🗺️ Google Maps (خرائط جوجل)</span></div>
+        <div class="app-picker-item" onclick="selectAppForButton('waze', 'تطبيق وايز', '🚗')"><span>🚗 Waze (وايز)</span></div>
+        <div class="app-picker-item" onclick="selectAppForButton('radio', 'راديو السيارة', '📻')"><span>📻 راديو السيارة الافتراضي</span></div>
+        <div class="app-picker-item" onclick="selectAppForButton('youtube', 'يوتيوب', '▶️')"><span>▶️ YouTube (يوتيوب)</span></div>
+        <div class="app-picker-item" onclick="selectAppForButton('ytmusic', 'يوتيوب ميوزك', '🎵')"><span>🎵 YouTube Music (موسيقى)</span></div>
+      </div>
+      <button class="modal-close-btn" onclick="closeAppPicker()" style="background:#444; color:#fff; margin-top:15px;" id="pickerCloseBtn">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- Blackout Mode Overlay -->
+  <div class="blackout-screen" id="blackoutScreen" onclick="toggleBlackout()">
+    <div class="blackout-clock" id="boClock">11:00</div>
+    <div class="blackout-dates">
+      <div id="boDateMiladi">--</div>
+      <div id="boDateHijri" style="color: #444;">--</div>
+    </div>
+    <div class="blackout-note" id="boNote">الصوت يعمل في الخلفية • انقر في أي مكان للإيقاظ</div>
+  </div>
+
+  <!-- Right Map Panel (40%) -->
+  <div class="nav-panel" id="btn-slot-map" data-key="map">
+    <div class="map-edit-hint" id="mapHintBadge">⚙️ تخصيص</div>
+    <div class="map-bg"></div>
+    <div class="nav-content">
+      <div class="speedo">
+        <span class="speed-val" id="liveSpeedVal">0</span><span class="speed-unit" id="speedUnit">كم/س</span>
+      </div>
+      <div>
+        <div id="mapTitle" style="font-size: 16px; font-weight: bold; color: var(--accent-color);">خرائط HERE أوفلاين</div>
+        <div id="mapSub" style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">GPS أوفلاين نشط</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Dashboard Panel (60%) -->
+  <div class="dash-panel">
+    <div class="top-bar">
+      <div class="clock-area">
+        <span class="clock" id="mainClock">11:00</span>
+        <span class="ampm" id="mainAmPm">مساءً</span>
+      </div>
+
+      <div class="dates-comp-group">
+        <div class="comp-box">
+          <span style="font-size:10px; color:var(--text-muted);" id="compLabel">القبلة</span>
+          <span class="qibla-val" id="qiblaDirVal">204° ↗</span>
+        </div>
+        <div class="dates">
+          <div id="dateMiladi">--</div>
+          <div id="dateHijri" style="color: var(--accent-color);">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prayer Times & Location Card -->
+    <div class="prayer-card">
+      <div class="loc-header">
+        <div><span id="locText">الموقع</span>: <span class="loc-name" id="userLocationName">تحديد عبر GPS...</span></div>
+        <div><span id="updateText">الوضع</span>: <span style="color:#00e676;" id="liveStatus">أوفلاين ذاتي</span></div>
+      </div>
+      <div class="prayer-grid" id="prayerGridContainer">
+        <div class="p-item" id="p-item-Fajr"><div class="p-name" id="p1">الفجر</div><div class="p-time" id="time-Fajr">--:--</div></div>
+        <div class="p-item" id="p-item-Dhuhr"><div class="p-name" id="p2">الظهر</div><div class="p-time" id="time-Dhuhr">--:--</div></div>
+        <div class="p-item" id="p-item-Asr"><div class="p-name" id="p3">العصر</div><div class="p-time" id="time-Asr">--:--</div></div>
+        <div class="p-item" id="p-item-Maghrib"><div class="p-name" id="p4">المغرب</div><div class="p-time" id="time-Maghrib">--:--</div></div>
+        <div class="p-item" id="p-item-Isha"><div class="p-name" id="p5">العشاء</div><div class="p-time" id="time-Isha">--:--</div></div>
+      </div>
+    </div>
+
+    <!-- 6 Core Driver Buttons -->
+    <div class="apps-grid">
+      <div class="app-icon" id="btn-slot-1" data-key="btn1">
+        <span class="edit-hint">⚙️</span>
+        <div class="icon-img" id="icon-btn1">📻</div>
+        <div class="app-label" id="label-btn1">الراديو</div>
+      </div>
+      <div class="app-icon" id="btn-slot-2" data-key="btn2">
+        <span class="edit-hint">⚙️</span>
+        <div class="icon-img" id="icon-btn2">📡</div>
+        <div class="app-label" id="label-btn2">البلوتوث</div>
+      </div>
+      <div class="app-icon" onclick="toggleDuaModal()" style="border-color: var(--accent-color);">
+        <div class="icon-img">🤲</div>
+        <div class="app-label" id="lblDua" style="color:var(--accent-color);">الأدعية والأذكار</div>
+      </div>
+      <div class="app-icon" onclick="toggleBlackout()">
+        <div class="icon-img">🌙</div>
+        <div class="app-label" id="lblBlackout">وضع النوم</div>
+      </div>
+      <div class="app-icon" id="btn-slot-5" data-key="btn5">
+        <span class="edit-hint">⚙️</span>
+        <div class="icon-img" id="icon-btn5">📱</div>
+        <div class="app-label" id="label-btn5">التطبيقات</div>
+      </div>
+      <div class="app-icon" onclick="toggleSettingsModal()" style="border-color: var(--border-color);">
+        <div class="icon-img">⚙️</div>
+        <div class="app-label" id="lblSettings">الإعدادات</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let startupTimer;
+  let timeLeft = 20;
+  let activeCustomKey = null;
+
+  const SAUDI_CITIES_DB = [
+    { ar: "حائل", en: "Hail", lat: 27.5114, lng: 41.7208 },
+    { ar: "الحليفة السفلى", en: "Al Hulayfah", lat: 25.9833, lng: 40.8167 },
+    { ar: "الغزالة", en: "Al Ghazalah", lat: 26.7833, lng: 41.3167 },
+    { ar: "الشملي", en: "Ash Shamli", lat: 26.8667, lng: 40.2333 },
+    { ar: "بقعاء", en: "Baqaa", lat: 27.8833, lng: 42.4000 },
+    { ar: "الرياض", en: "Riyadh", lat: 24.7136, lng: 46.6753 },
+    { ar: "بريدة", en: "Buraidah", lat: 26.3260, lng: 43.9750 },
+    { ar: "المدينة المنورة", en: "Madinah", lat: 24.5247, lng: 39.5692 },
+    { ar: "مكة المكرمة", en: "Makkah", lat: 21.3891, lng: 39.8579 },
+    { ar: "جدة", en: "Jeddah", lat: 21.4858, lng: 39.1925 },
+    { ar: "تبوك", en: "Tabuk", lat: 28.3835, lng: 36.5662 },
+    { ar: "الدمام", en: "Dammam", lat: 26.4207, lng: 50.0888 },
+    { ar: "أبها", en: "Abha", lat: 18.2164, lng: 42.5053 }
+  ];
+
+  const OfflinePrayerEngine = {
+    dtr: d => (d * Math.PI) / 180.0,
+    rtd: r => (r * 180.0) / Math.PI,
+    fixAngle: a => { a = a - 360.0 * Math.floor(a / 360.0); return a < 0 ? a + 360.0 : a; },
+    fixHour: a => { a = a - 24.0 * Math.floor(a / 24.0); return a < 0 ? a + 24.0 : a; },
+
+    julianDate(year, month, day) {
+      if (month <= 2) { year -= 1; month += 12; }
+      const A = Math.floor(year / 100);
+      const B = 2 - A + Math.floor(A / 4);
+      return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+    },
+
+    sunPosition(jd) {
+      const D = jd - 2451545.0;
+      const g = this.fixAngle(357.529 + 0.98560028 * D);
+      const q = this.fixAngle(280.459 + 0.98564736 * D);
+      const L = this.fixAngle(q + 1.915 * Math.sin(this.dtr(g)) + 0.020 * Math.sin(this.dtr(2 * g)));
+      const e = 23.439 - 0.00000036 * D;
+      const RA = this.rtd(Math.atan2(Math.cos(this.dtr(e)) * Math.sin(this.dtr(L)), Math.cos(this.dtr(L)))) / 15.0;
+      const eqt = q / 15.0 - this.fixHour(RA);
+      const decl = this.rtd(Math.asin(Math.sin(this.dtr(e)) * Math.sin(this.dtr(L))));
+      return { decl, eqt };
+    },
+
+    computeMidDay(jd, lng, tz) {
+      const eqt = this.sunPosition(jd).eqt;
+      return this.fixHour(12 + tz - lng / 15.0 - eqt);
+    },
+
+    computeTime(jd, angle, lat, lng, tz, dir) {
+      const decl = this.sunPosition(jd).decl;
+      const noon = this.computeMidDay(jd, lng, tz);
+      const num = -Math.sin(this.dtr(angle)) - Math.sin(this.dtr(decl)) * Math.sin(this.dtr(lat));
+      const den = Math.cos(this.dtr(decl)) * Math.cos(this.dtr(lat));
+      const val = Math.max(-1, Math.min(1, num / den));
+      const t = (1 / 15.0) * this.rtd(Math.acos(val));
+      return noon + (dir === 'ccw' ? -t : t);
+    },
+
+    computeAsr(jd, lat, lng, tz) {
+      const decl = this.sunPosition(jd).decl;
+      const angle = -this.rtd(Math.atan(1 / (1 + Math.tan(this.dtr(Math.abs(lat - decl))))));
+      return this.computeTime(jd, -angle, lat, lng, tz, 'cw');
+    },
+
+    formatTime(time) {
+      if (isNaN(time)) return "--:--";
+      time = this.fixHour(time + 0.5 / 60);
+      const hours = Math.floor(time);
+      const minutes = Math.floor((time - hours) * 60);
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    },
+
+    calculate(lat, lng, date = new Date()) {
+      const tz = 3;
+      const jd = this.julianDate(date.getFullYear(), date.getMonth() + 1, date.getDate()) - lng / (15 * 24);
+      
+      const fajr = this.computeTime(jd, 18.5, lat, lng, tz, 'ccw');
+      const dhuhr = this.computeMidDay(jd, lng, tz) + 2 / 60;
+      const asr = this.computeAsr(jd, lat, lng, tz);
+      const maghrib = this.computeTime(jd, 0.833, lat, lng, tz, 'cw');
+      const isha = maghrib + 1.5;
+
+      return {
+        Fajr: this.formatTime(fajr),
+        Dhuhr: this.formatTime(dhuhr),
+        Asr: this.formatTime(asr),
+        Maghrib: this.formatTime(maghrib),
+        Isha: this.formatTime(isha)
+      };
+    },
+
+    calculateQibla(lat, lng) {
+      const makkahLat = this.dtr(21.4225);
+      const makkahLng = this.dtr(39.8262);
+      const pLat = this.dtr(lat);
+      const dLng = makkahLng - this.dtr(lng);
+      const y = Math.sin(dLng);
+      const x = Math.cos(pLat) * Math.tan(makkahLat) - Math.sin(pLat) * Math.cos(dLng);
+      let qibla = Math.round(this.rtd(Math.atan2(y, x)));
+      if (qibla < 0) qibla += 360;
+      return qibla;
+    }
+  };
+
+  function startCountdown() {
+    const badge = document.getElementById('countdownBadge');
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    startupTimer = setInterval(() => {
+      timeLeft--;
+      if(badge) badge.innerText = (lang === 'en') ? `${timeLeft}s remaining` : `${timeLeft} ثانية`;
+      if(timeLeft <= 0) { clearInterval(startupTimer); closeStartupModal(); }
+    }, 1000);
+  }
+
+  function closeStartupModal() {
+    clearInterval(startupTimer);
+    document.getElementById('startupModal').style.display = 'none';
+  }
+
+  window.onload = function() {
+    startCountdown();
+    loadCustomButtons();
+    initLongPressHandlers();
+    initSwipeGestures();
+    initCompassSensor();
+    updateLiveClockAndDates();
+    
+    const cachedLat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
+    const cachedLng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
+    processOfflineLocation(cachedLat, cachedLng);
+
+    startOfflineGPSWatcher();
+    
+    setInterval(updateLiveClockAndDates, 1000);
+    setInterval(() => {
+      const lat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
+      const lng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
+      processOfflineLocation(lat, lng);
+    }, 3600000);
+  };
+
+  function initCompassSensor() {
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (event) => {
+        let alpha = event.alpha; // Compass heading
+        if (alpha !== null) {
+          let heading = Math.round(360 - alpha);
+          let compassText = `${heading}° `;
+          if (heading >= 337.5 || heading < 22.5) compassText += 'شمال';
+          else if (heading >= 22.5 && heading < 67.5) compassText += 'شمال شرق';
+          else if (heading >= 67.5 && heading < 112.5) compassText += 'شرق';
+          else if (heading >= 112.5 && heading < 157.5) compassText += 'جنوب شرق';
+          else if (heading >= 157.5 && heading < 202.5) compassText += 'جنوب';
+          else if (heading >= 202.5 && heading < 247.5) compassText += 'جنوب غرب';
+          else if (heading >= 247.5 && heading < 292.5) compassText += 'غرب';
+          else compassText += 'شمال غرب';
+
+          const compEl = document.getElementById('sideCompassDeg');
+          if (compEl) compEl.innerText = compassText;
+        }
+      }, true);
+    }
+  }
+
+  function initSwipeGestures() {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const frame = document.getElementById('carFrame');
+
+    frame.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
+    frame.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchEndX - touchStartX;
+      const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+
+      if (Math.abs(diff) > 80) {
+        if ((isRtl && diff < 0) || (!isRtl && diff > 0)) toggleSideScreen(true);
+        else toggleSideScreen(false);
+      }
+    }, false);
+  }
+
+  function toggleSideScreen(open) {
+    const side = document.getElementById('sideScreen');
+    if (open) side.classList.add('active');
+    else side.classList.remove('active');
+  }
+
+  let isPlaying = true;
+  let isMuted = false;
+  function togglePlayPause() { isPlaying = !isPlaying; alert(isPlaying ? 'استئناف تشغيل الوسائط' : 'إيقاف مؤقت للوسائط'); }
+  function toggleMuteAudio() { isMuted = !isMuted; alert(isMuted ? 'تم كتم الصوت (Mute)' : 'تم إلغاء الكتم'); }
+
+  let lastLocationUpdate = 0;
+
+  function startOfflineGPSWatcher() {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        if (position.coords.speed !== null && !isNaN(position.coords.speed)) {
+          const speedKmh = Math.round(position.coords.speed * 3.6);
+          document.getElementById('liveSpeedVal').innerText = speedKmh;
+        }
+
+        const now = Date.now();
+        if (now - lastLocationUpdate > 3600000 || lastLocationUpdate === 0) {
+          localStorage.setItem('last_lat', lat);
+          localStorage.setItem('last_lng', lng);
+          processOfflineLocation(lat, lng);
+          lastLocationUpdate = now;
+        }
+      },
+      (err) => { console.log("GPS standby:", err); },
+      { enableHighAccuracy: true, maximumAge: 5000 }
+    );
+  }
+
+  function processOfflineLocation(lat, lng) {
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    
+    let nearestCity = SAUDI_CITIES_DB[0];
+    let minDistance = Infinity;
+
+    SAUDI_CITIES_DB.forEach(city => {
+      const dist = Math.hypot(city.lat - lat, city.lng - lng);
+      if (dist < minDistance) { minDistance = dist; nearestCity = city; }
+    });
+
+    const cityName = (lang === 'en') ? nearestCity.en : nearestCity.ar;
+    document.getElementById('userLocationName').innerText = cityName;
+
+    const qiblaAngle = OfflinePrayerEngine.calculateQibla(lat, lng);
+    document.getElementById('qiblaDirVal').innerText = `${qiblaAngle}° ↗`;
+    document.getElementById('sideQiblaDirVal').innerText = `${qiblaAngle}° ↗`;
+
+    const timings = OfflinePrayerEngine.calculate(lat, lng, new Date());
+    document.getElementById('time-Fajr').innerText = timings.Fajr;
+    document.getElementById('time-Dhuhr').innerText = timings.Dhuhr;
+    document.getElementById('time-Asr').innerText = timings.Asr;
+    document.getElementById('time-Maghrib').innerText = timings.Maghrib;
+    document.getElementById('time-Isha').innerText = timings.Isha;
+
+    calculateNextPrayerCountdown(timings);
+    highlightActivePrayer(timings);
+  }
+
+  function calculateNextPrayerCountdown(timings) {
+    const now = new Date();
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+    const toMins = t => { const p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
+
+    const prayerList = [
+      { name: 'الفجر (Fajr)', mins: toMins(timings.Fajr) },
+      { name: 'الظهر (Dhuhr)', mins: toMins(timings.Dhuhr) },
+      { name: 'العصر (Asr)', mins: toMins(timings.Asr) },
+      { name: 'المغرب (Maghrib)', mins: toMins(timings.Maghrib) },
+      { name: 'العشاء (Isha)', mins: toMins(timings.Isha) }
+    ];
+
+    let nextPr = prayerList[0];
+    let diff = -1;
+
+    for (let p of prayerList) {
+      if (p.mins > currentMins) { nextPr = p; diff = p.mins - currentMins; break; }
+    }
+
+    if (diff === -1) {
+      diff = (1440 - currentMins) + prayerList[0].mins;
+      nextPr = prayerList[0];
+    }
+
+    const hrs = Math.floor(diff / 60);
+    const mins = diff % 60;
+    const text = `باقي على صلاة ${nextPr.name}: ${hrs > 0 ? hrs + ' ساعة و ' : ''}${mins} دقيقة`;
+    document.getElementById('sideNextPrayerInfo').innerText = text;
+  }
+
+  function updateLiveClockAndDates() {
+    const now = new Date();
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    
+    let ampmStr = lang === 'ar' ? (hours >= 12 ? 'مساءً' : 'صباحاً') : (hours >= 12 ? 'PM' : 'AM');
+    let displayHours = hours % 12 || 12;
+    displayHours = displayHours < 10 ? '0' + displayHours : displayHours;
+
+    const timeStr = `${displayHours}:${minutes}`;
+    document.getElementById('mainClock').innerText = timeStr;
+    document.getElementById('mainAmPm').innerText = ampmStr;
+    document.getElementById('boClock').innerText = timeStr;
+    document.getElementById('sideClock').innerText = timeStr;
+
+    const optionsMiladi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const miladiStr = now.toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', optionsMiladi);
+    
+    try {
+      const hijriStr = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-ca-islamic' : 'en-US-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
+      document.getElementById('dateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
+      document.getElementById('sideDateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
+      document.getElementById('boDateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
+    } catch(e) {}
+
+    document.getElementById('dateMiladi').innerText = miladiStr;
+    document.getElementById('boDateMiladi').innerText = miladiStr;
+    document.getElementById('sideDateMiladi').innerText = miladiStr;
+  }
+
+  function highlightActivePrayer(timings) {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const toMins = t => { const p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
+
+    const prayers = [
+      { name: 'Fajr', mins: toMins(timings.Fajr) },
+      { name: 'Dhuhr', mins: toMins(timings.Dhuhr) },
+      { name: 'Asr', mins: toMins(timings.Asr) },
+      { name: 'Maghrib', mins: toMins(timings.Maghrib) },
+      { name: 'Isha', mins: toMins(timings.Isha) }
+    ];
+
+    document.querySelectorAll('.p-item').forEach(el => el.classList.remove('active'));
+    let activePr = 'Isha';
+    for (let i = 0; i < prayers.length; i++) {
+      if (currentTime < prayers[i].mins) { activePr = i === 0 ? 'Isha' : prayers[i - 1].name; break; }
+    }
+    const el = document.getElementById(`p-item-${activePr}`);
+    if(el) el.classList.add('active');
+  }
+
+  function initLongPressHandlers() {
+    const customSlots = [
+      { key: 'btn1', defaultName: 'الراديو', defaultIcon: '📻' },
+      { key: 'btn2', defaultName: 'البلوتوث', defaultIcon: '📡' },
+      { key: 'btn5', defaultName: 'التطبيقات', defaultIcon: '📱' },
+      { key: 'map', defaultName: 'الخرائط', defaultIcon: '🧭' }
+    ];
+
+    customSlots.forEach(slot => {
+      const el = document.getElementById(slot.key === 'map' ? 'btn-slot-map' : `btn-slot-${slot.key.replace('btn','')}`);
+      if(!el) return;
+
+      let pressTimer;
+      let isLongPress = false;
+
+      const startPress = () => {
+        isLongPress = false;
+        pressTimer = setTimeout(() => { isLongPress = true; openAppPicker(slot.key); }, 1000);
+      };
+      const cancelPress = () => clearTimeout(pressTimer);
+
+      el.addEventListener('mousedown', startPress);
+      el.addEventListener('mouseup', cancelPress);
+      el.addEventListener('mouseleave', cancelPress);
+      el.addEventListener('touchstart', startPress);
+      el.addEventListener('touchend', cancelPress);
+
+      el.addEventListener('click', () => {
+        if (isLongPress) return;
+        const savedPkg = localStorage.getItem(`custom_pkg_${slot.key}`);
+        if(savedPkg) {
+          if(window.AndroidBridge && window.AndroidBridge.openApp) window.AndroidBridge.openApp(savedPkg);
+          else alert(`فتح التطبيق المربوط: ${savedPkg}`);
+        } else {
+          if(slot.key === 'map') alert('فتح خرائط HERE أوفلاين');
+          else alert(`فتح التطبيق الافتراضي: ${slot.defaultName}`);
+        }
+      });
+    });
+  }
+
+  function openAppPicker(key) { activeCustomKey = key; document.getElementById('appPickerModal').style.display = 'flex'; }
+  function closeAppPicker() { document.getElementById('appPickerModal').style.display = 'none'; activeCustomKey = null; }
+
+  function selectAppForButton(pkgName, appName, appIcon) {
+    if(!activeCustomKey) return;
+    localStorage.setItem(`custom_pkg_${activeCustomKey}`, pkgName);
+    localStorage.setItem(`custom_name_${activeCustomKey}`, appName);
+    localStorage.setItem(`custom_icon_${activeCustomKey}`, appIcon);
+
+    if(activeCustomKey === 'map') {
+      document.getElementById('mapTitle').innerText = appName;
+    } else {
+      document.getElementById(`icon-${activeCustomKey}`).innerText = appIcon;
+      document.getElementById(`label-${activeCustomKey}`).innerText = appName;
+    }
+    closeAppPicker();
+  }
+
+  function loadCustomButtons() {
+    ['btn1', 'btn2', 'btn5', 'map'].forEach(key => {
+      const name = localStorage.getItem(`custom_name_${key}`);
+      const icon = localStorage.getItem(`custom_icon_${key}`);
+      if(name && icon) {
+        if(key === 'map') document.getElementById('mapTitle').innerText = name;
+        else {
+          document.getElementById(`icon-${key}`).innerText = icon;
+          document.getElementById(`label-${key}`).innerText = name;
+        }
+      }
+    });
+  }
+
+  function toggleBlackout() {
+    const s = document.getElementById('blackoutScreen');
+    s.style.display = (s.style.display === 'flex') ? 'none' : 'flex';
+  }
+  function toggleDuaModal() {
+    const m = document.getElementById('duaModal');
+    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+  }
+  function toggleSettingsModal() {
+    const m = document.getElementById('settingsModal');
+    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+  }
+
+  function setThemeMode(mode) {
+    ['btnModeNight', 'btnModeDay', 'btnModeAuto'].forEach(id => document.getElementById(id).classList.remove('active'));
+    if(mode === 'night') {
+      document.documentElement.setAttribute('data-theme', 'night');
+      document.getElementById('btnModeNight').classList.add('active');
+    } else if(mode === 'day') {
+      document.documentElement.setAttribute('data-theme', 'day');
+      document.getElementById('btnModeDay').classList.add('active');
+    } else {
+      document.getElementById('btnModeAuto').classList.add('active');
+      const hour = new Date().getHours();
+      document.documentElement.setAttribute('data-theme', (hour >= 6 && hour < 18) ? 'day' : 'night');
+    }
+  }
+
+  function setColorTheme(color, btn) {
+    document.documentElement.setAttribute('data-color', color);
+    btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function setLanguage(lang) {
+    const html = document.documentElement;
+    document.getElementById('btnLangAr').classList.remove('active');
+    document.getElementById('btnLangEn').classList.remove('active');
+
+    if(lang === 'en') {
+      html.setAttribute('dir', 'ltr');
+      html.setAttribute('lang', 'en');
+      document.getElementById('btnLangEn').classList.add('active');
+      document.getElementById('compLabel').innerText = 'QIBLA';
+      document.getElementById('locText').innerText = 'Location';
+      document.getElementById('updateText').innerText = 'Mode';
+      document.getElementById('liveStatus').innerText = 'Offline GPS';
+      document.getElementById('p1').innerText = 'Fajr';
+      document.getElementById('p2').innerText = 'Dhuhr';
+      document.getElementById('p3').innerText = 'Asr';
+      document.getElementById('p4').innerText = 'Maghrib';
+      document.getElementById('p5').innerText = 'Isha';
+      document.getElementById('lblDua').innerText = 'Supplications';
+      document.getElementById('lblBlackout').innerText = 'Blackout';
+      document.getElementById('lblSettings').innerText = 'Settings';
+      document.getElementById('speedUnit').innerText = 'km/h';
+      document.getElementById('mapSub').innerText = 'Offline GPS Active';
+      document.getElementById('mapHintBadge').innerText = '⚙️ Customize';
+      document.getElementById('sideQiblaText').innerText = 'Qibla Direction:';
+      document.getElementById('tipsBox').innerHTML = `💡 <strong>Usage Tip:</strong> Swipe left or right to access the quick side assistant screen. Long-press any button or map to customize.`;
+      document.getElementById('aboutBox').innerHTML = `<strong>Launcher Name:</strong> Lanishna<br>This work is dedicated for the sake of Allah and is not permitted for commercial use.`;
+    } else {
+      html.setAttribute('dir', 'rtl');
+      html.setAttribute('lang', 'ar');
+      document.getElementById('btnLangAr').classList.add('active');
+      document.getElementById('compLabel').innerText = 'القبلة';
+      document.getElementById('locText').innerText = 'الموقع';
+      document.getElementById('updateText').innerText = 'الوضع';
+      document.getElementById('liveStatus').innerText = 'أوفلاين ذاتي';
+      document.getElementById('p1').innerText = 'الفجر';
+      document.getElementById('p2').innerText = 'الظهر';
+      document.getElementById('p3').innerText = 'العصر';
+      document.getElementById('p4').innerText = 'المغرب';
+      document.getElementById('p5').innerText = 'العشاء';
+      document.getElementById('lblDua').innerText = 'الأدعية والأذكار';
+      document.getElementById('lblBlackout').innerText = 'وضع النوم';
+      document.getElementById('lblSettings').innerText = 'الإعدادات';
+      document.getElementById('speedUnit').innerText = 'كم/س';
+      document.getElementById('mapSub').innerText = 'GPS أوفلاين نشط';
+      document.getElementById('mapHintBadge').innerText = '⚙️ تخصيص';
+      document.getElementById('sideQiblaText').innerText = 'اتجاه القبلة:';
+      document.getElementById('tipsBox').innerHTML = `💡 <strong>تنبيه الاستخدام:</strong> اسحب يميناً أو يساراً في الشاشة للوصول لشاشة المساعد الجانبية السريعة. ولتغيير أي زر أو خريطة، اضغط مطولاً عليها.`;
+      document.getElementById('aboutBox').innerHTML = `<strong>اسم اللانشر:</strong> لانشرنا<br>هذا العمل لوجه الله ولا أحلل استخدامه تجارياً، ويمكن الحصول عليه مجاناً من خلال الإنترنت. لطلب رابط التحميل تواصل على جوال <strong>00966556156525</strong> أو عبر التواصل الاجتماعي <strong>@turkiftalf</strong>.`;
+    }
+    updateLiveClockAndDates();
+    const lat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
+    const lng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
+    processOfflineLocation(lat, lng);
+  }
+</script>
+</body>
+</html>
