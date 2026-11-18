@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "لانشرنا",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "turkiftalf.github",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}
