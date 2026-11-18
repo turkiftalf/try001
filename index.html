@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-theme="night" data-color="blue">
 <head>
@@ -67,7 +68,7 @@
   /* Compass Widget inside Side Screen */
   .side-compass-box { display: flex; align-items: center; justify-content: space-between; background: var(--item-bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 5px; }
 
-  /* Startup Modal */
+  /* Startup & Smart Alert Modals */
   .startup-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 7, 10, 0.95); z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
   .startup-box { background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 16px; padding: 25px; max-width: 600px; width: 100%; box-shadow: 0 10px 30px var(--accent-glow); position: relative; }
   .startup-title { font-size: 18px; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; }
@@ -85,8 +86,8 @@
   .clock { font-size: 32px; font-weight: bold; letter-spacing: 1px; color: var(--text-main); }
   .ampm { font-size: 14px; color: var(--text-muted); }
 
-  .dates-comp-group { display: flex; align-items: center; gap: 10px; }
-  .comp-box { background: var(--item-bg); padding: 5px 10px; border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); text-align: center; }
+  .dates-comp-group { display: flex; align-items: center; gap: 8px; }
+  .comp-box { background: var(--item-bg); padding: 5px 10px; border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); text-align: center; min-width: 72px; }
   .qibla-val { color: var(--accent-color); font-weight: bold; display: block; }
   .dates { text-align: right; font-size: 11px; color: var(--text-muted); line-height: 1.3; }
   [dir="ltr"] .dates { text-align: left; }
@@ -130,17 +131,39 @@
 
   /* Modals */
   .modal { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-content { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; width: 100%; max-width: 500px; padding: 20px; text-align: inherit; max-height: 85vh; overflow-y: auto; }
+  .modal-content { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; width: 100%; max-width: 560px; padding: 20px; text-align: inherit; max-height: 88vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) var(--item-bg); }
   .modal-title { font-size: 18px; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
   .dua-item { margin-bottom: 12px; font-size: 13px; color: var(--text-main); background: var(--item-bg); padding: 10px; border-radius: 8px; line-height: 1.6; }
-  .modal-close-btn { background: var(--accent-color); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; }
+  .modal-close-btn { background: var(--accent-color); color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 12px; width: 100%; transition: 0.2s; font-size: 14px; }
   .modal-close-btn:hover { background: var(--accent-hover); }
 
-  .settings-row { margin-bottom: 12px; }
-  .settings-label { font-size: 13px; font-weight: bold; margin-bottom: 6px; color: var(--text-muted); display: block; }
+  .settings-row { margin-bottom: 14px; }
+  .settings-label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: var(--text-muted); display: block; }
   .options-group { display: flex; gap: 8px; flex-wrap: wrap; }
   .opt-btn { flex: 1; min-width: 80px; padding: 8px; background: var(--item-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; }
   .opt-btn.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); }
+
+  /* Toggle Switches Grid for Alerts & Supplications */
+  .toggles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (max-width: 520px) { .toggles-grid { grid-template-columns: 1fr; } }
+  .toggle-card { background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; min-height: 46px; }
+  .toggle-card:hover { border-color: var(--accent-color); background: var(--card-hover); }
+  .toggle-card.is-on { border-color: rgba(0, 230, 118, 0.45); }
+  .toggle-info { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-title { font-size: 12px; font-weight: bold; color: var(--text-main); }
+  .toggle-sub { font-size: 10px; color: var(--text-muted); }
+
+  .switch-pill { width: 46px; height: 26px; background: #3b4252; border-radius: 30px; position: relative; transition: background 0.25s ease; flex-shrink: 0; border: 1px solid var(--border-color); }
+  .switch-pill::after { content: ''; position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: #d8dee9; border-radius: 50%; transition: transform 0.25s ease, background 0.25s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+  [dir="ltr"] .switch-pill::after { right: auto; left: 2px; }
+
+  .toggle-card.is-on .switch-pill { background: #00c853; border-color: #00e676; }
+  .toggle-card.is-on .switch-pill::after { transform: translateX(-20px); background: #ffffff; }
+  [dir="ltr"] .toggle-card.is-on .switch-pill::after { transform: translateX(20px); }
+
+  /* Toast notification inside app (replaces alert) */
+  .app-toast { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 8px 18px; border-radius: 30px; font-size: 12px; font-weight: bold; z-index: 500; box-shadow: 0 6px 20px rgba(0,0,0,0.7); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+  .app-toast.show { opacity: 1; }
 
   .app-picker-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-top: 10px; }
   .app-picker-item { background: var(--item-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
@@ -153,6 +176,9 @@
 <body id="mainBody">
 
 <div class="car-frame" id="carFrame">
+
+  <!-- Toast Feedback -->
+  <div class="app-toast" id="appToast">تم حفظ الإعداد</div>
 
   <!-- SIDE SWIPE DASHBOARD SCREEN -->
   <div class="side-screen" id="sideScreen">
@@ -170,12 +196,12 @@
       <!-- Card 1: Now Playing Media & Controls -->
       <div class="side-card">
         <div>
-          <div class="side-card-title">🎵 الوسائط الحية (Now Playing)</div>
+          <div class="side-card-title" id="sideMediaHeader">🎵 الوسائط الحية (Now Playing)</div>
           <div class="media-info" id="mediaTitleDisplay">تلاوة سورة الكهف - الشيخ عبد الباسط</div>
         </div>
         <div class="media-controls">
-          <button class="control-btn" onclick="togglePlayPause()">⏸️ إيقاف / تشغيل</button>
-          <button class="control-btn" onclick="toggleMuteAudio()">🔇 كتم الصوت</button>
+          <button class="control-btn" id="btnSidePlayPause" onclick="togglePlayPause()">⏸️ إيقاف / تشغيل</button>
+          <button class="control-btn" id="btnSideMute" onclick="toggleMuteAudio()">🔇 كتم الصوت</button>
         </div>
       </div>
 
@@ -183,7 +209,7 @@
       <div class="side-card">
         <div>
           <div class="side-card-title">
-            <span>🧭 البوصلة واتجاه القبلة</span>
+            <span id="sideCompassHeader">🧭 البوصلة واتجاه القبلة</span>
             <span style="font-size: 11px; color: var(--accent-color);" id="sideCompassDeg">0° شمال</span>
           </div>
           <div class="side-compass-box">
@@ -192,18 +218,18 @@
           </div>
           <div style="font-size: 13px; font-weight: bold; margin-top: 12px;" id="sideNextPrayerInfo">باقي على صلاة العصر: ساعة و 15 دقيقة</div>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted);">اسحب يساراً للعودة للرئيسية</div>
+        <div style="font-size: 11px; color: var(--text-muted);" id="sideSwipeBackHint">اسحب يساراً للعودة للرئيسية</div>
       </div>
     </div>
 
     <div class="side-footer">
-      <div>لانشرنا • نظام القيادة الذكي</div>
-      <button class="back-to-main-btn" onclick="toggleSideScreen(false)">العودة للرئيسية ⬅</button>
+      <div id="sideFooterBrand">لانشرنا • نظام القيادة الذكي</div>
+      <button class="back-to-main-btn" id="btnBackToMain" onclick="toggleSideScreen(false)">العودة للرئيسية ⬅</button>
     </div>
   </div>
   
   <!-- Startup Supplication Modal -->
-  <div class="startup-modal" id="startupModal">
+  <div class="startup-modal" id="startupModal" style="display: none;">
     <div class="startup-box">
       <div class="countdown-badge" id="countdownBadge">20 ثانية</div>
       <div class="startup-title" id="startTitle">دعاء الخروج والركوب</div>
@@ -212,6 +238,18 @@
         «سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ»
       </div>
       <button class="startup-btn" id="startBtn" onclick="closeStartupModal()">انطلاق (إغلاق فوري)</button>
+    </div>
+  </div>
+
+  <!-- Smart Timed Alert Modal (Prayer Adhan & Morning/Evening Adhkar - 20s) -->
+  <div class="startup-modal" id="smartAlertModal" style="display: none; z-index: 310;">
+    <div class="startup-box">
+      <div class="countdown-badge" id="alertCountdownBadge">20 ثانية</div>
+      <div class="startup-title" id="smartAlertTitle">حان الآن وقت الصلاة</div>
+      <div class="startup-text" id="smartAlertText" style="font-size: 16px; line-height: 1.8;">
+        اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الْفَلَاحِ، اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، لَا إِلَهَ إِلَّا اللَّهُ
+      </div>
+      <button class="startup-btn" id="smartAlertCloseBtn" onclick="closeSmartAlert()">إغلاق فوري</button>
     </div>
   </div>
 
@@ -236,6 +274,85 @@
         💡 <strong>تنبيه الاستخدام:</strong> اسحب يميناً أو يساراً في الشاشة للوصول لشاشة المساعد الجانبية السريعة. ولتغيير أي زر أو خريطة، اضغط مطولاً عليها.
       </div>
 
+      <!-- NEW SECTION: Alerts & Supplications Independent Toggle Controls -->
+      <div class="settings-row">
+        <span class="settings-label" id="lblAlertsControl">التحكم بالتنبيهات والأذكار / Alerts & Supplications Control</span>
+        <div class="toggles-grid">
+          <div class="toggle-card is-on" id="toggle-card-alert_startup" onclick="toggleAlertSetting('alert_startup')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_startup">دعاء الخروج والركوب</span>
+              <span class="toggle-sub" id="sub-alert_startup">مفعل • عند التشغيل</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_morning" onclick="toggleAlertSetting('alert_morning')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_morning">أذكار الصباح</span>
+              <span class="toggle-sub" id="sub-alert_morning">مفعل • تلقائي بعد الفجر</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_evening" onclick="toggleAlertSetting('alert_evening')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_evening">أذكار المساء</span>
+              <span class="toggle-sub" id="sub-alert_evening">مفعل • تلقائي بعد العصر</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_Fajr" onclick="toggleAlertSetting('alert_Fajr')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_Fajr">تنبيه صلاة الفجر</span>
+              <span class="toggle-sub" id="sub-alert_Fajr">مفعل • أذان منبثق</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_Dhuhr" onclick="toggleAlertSetting('alert_Dhuhr')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_Dhuhr">تنبيه صلاة الظهر</span>
+              <span class="toggle-sub" id="sub-alert_Dhuhr">مفعل • أذان منبثق</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_Asr" onclick="toggleAlertSetting('alert_Asr')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_Asr">تنبيه صلاة العصر</span>
+              <span class="toggle-sub" id="sub-alert_Asr">مفعل • أذان منبثق</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_Maghrib" onclick="toggleAlertSetting('alert_Maghrib')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_Maghrib">تنبيه صلاة المغرب</span>
+              <span class="toggle-sub" id="sub-alert_Maghrib">مفعل • أذان منبثق</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+
+          <div class="toggle-card is-on" id="toggle-card-alert_Isha" onclick="toggleAlertSetting('alert_Isha')">
+            <div class="toggle-info">
+              <span class="toggle-title" id="lbl-alert_Isha">تنبيه صلاة العشاء</span>
+              <span class="toggle-sub" id="sub-alert_Isha">مفعل • أذان منبثق</span>
+            </div>
+            <div class="switch-pill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label" id="lblPreviewAlerts">معاينة التنبيهات المنبثقة (20 ثانية) / Preview Pop-up Alerts</span>
+        <div class="options-group">
+          <button class="opt-btn" id="btnTestAdhan" onclick="triggerSmartAlert('adhan', 'الظهر')">🕌 تجربة الأذان</button>
+          <button class="opt-btn" id="btnTestMorning" onclick="triggerSmartAlert('morning')">🌅 أذكار الصباح</button>
+          <button class="opt-btn" id="btnTestEvening" onclick="triggerSmartAlert('evening')">🌇 أذكار المساء</button>
+        </div>
+      </div>
+
       <div class="settings-row">
         <span class="settings-label" id="lblLangSetting">لغة الواجهة / Interface Language</span>
         <div class="options-group">
@@ -250,6 +367,14 @@
           <button class="opt-btn" id="btnModeNight" onclick="setThemeMode('night')">ليلي 🌙</button>
           <button class="opt-btn" id="btnModeDay" onclick="setThemeMode('day')">نهاري ☀️</button>
           <button class="opt-btn active" id="btnModeAuto" onclick="setThemeMode('auto')">تلقائي ⚙️</button>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <span class="settings-label" id="lblClockFormatSetting">نظام الساعة / Clock Format</span>
+        <div class="options-group">
+          <button class="opt-btn active" id="btnClock12" onclick="setClockFormat('12')">12 ساعة (12H)</button>
+          <button class="opt-btn" id="btnClock24" onclick="setClockFormat('24')">24 ساعة (24H)</button>
         </div>
       </div>
 
@@ -325,6 +450,10 @@
 
       <div class="dates-comp-group">
         <div class="comp-box">
+          <span style="font-size:10px; color:var(--text-muted);" id="mainCompLabel">البوصلة</span>
+          <span class="qibla-val" id="mainCompassVal">0° شمال</span>
+        </div>
+        <div class="comp-box">
           <span style="font-size:10px; color:var(--text-muted);" id="compLabel">القبلة</span>
           <span class="qibla-val" id="qiblaDirVal">204° ↗</span>
         </div>
@@ -387,7 +516,134 @@
 <script>
   let startupTimer;
   let timeLeft = 20;
+  let smartAlertTimer;
+  let smartAlertTimeLeft = 20;
   let activeCustomKey = null;
+  let latestCalculatedTimings = null;
+  let toastTimeout;
+
+  // All 8 Independent Alert Keys (Default: true)
+  const ALERT_SETTING_KEYS = [
+    'alert_startup',
+    'alert_morning',
+    'alert_evening',
+    'alert_Fajr',
+    'alert_Dhuhr',
+    'alert_Asr',
+    'alert_Maghrib',
+    'alert_Isha'
+  ];
+
+  // Read boolean setting from localStorage (defaults to true if not yet set)
+  function isAlertEnabled(key) {
+    const val = localStorage.getItem(key);
+    return val === null ? true : (val === 'true');
+  }
+
+  // Toggle individual alert setting, save to localStorage, and refresh UI
+  function toggleAlertSetting(key) {
+    const nextState = !isAlertEnabled(key);
+    localStorage.setItem(key, String(nextState));
+    syncAlertTogglesUI();
+
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    const labelEl = document.getElementById(`lbl-${key}`);
+    const itemName = labelEl ? labelEl.innerText : key;
+    const statusText = lang === 'en'
+      ? `${itemName}: ${nextState ? 'Enabled' : 'Disabled'}`
+      : `${itemName}: ${nextState ? 'مُفعّل' : 'مُعطّل'}`;
+    showToast(statusText);
+  }
+
+  // Synchronize all toggle cards in Settings Modal with localStorage & active language
+  function syncAlertTogglesUI() {
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+
+    const meta = {
+      alert_startup: {
+        arTitle: 'دعاء الخروج والركوب',
+        enTitle: 'Riding Supplication',
+        arDesc: 'عند التشغيل',
+        enDesc: 'On Startup'
+      },
+      alert_morning: {
+        arTitle: 'أذكار الصباح',
+        enTitle: 'Morning Adhkar',
+        arDesc: 'تلقائي بعد الفجر',
+        enDesc: 'Auto after Fajr'
+      },
+      alert_evening: {
+        arTitle: 'أذكار المساء',
+        enTitle: 'Evening Adhkar',
+        arDesc: 'تلقائي بعد العصر',
+        enDesc: 'Auto after Asr'
+      },
+      alert_Fajr: {
+        arTitle: 'تنبيه صلاة الفجر',
+        enTitle: 'Fajr Prayer Alert',
+        arDesc: 'أذان منبثق',
+        enDesc: 'Pop-up Adhan'
+      },
+      alert_Dhuhr: {
+        arTitle: 'تنبيه صلاة الظهر',
+        enTitle: 'Dhuhr Prayer Alert',
+        arDesc: 'أذان منبثق',
+        enDesc: 'Pop-up Adhan'
+      },
+      alert_Asr: {
+        arTitle: 'تنبيه صلاة العصر',
+        enTitle: 'Asr Prayer Alert',
+        arDesc: 'أذان منبثق',
+        enDesc: 'Pop-up Adhan'
+      },
+      alert_Maghrib: {
+        arTitle: 'تنبيه صلاة المغرب',
+        enTitle: 'Maghrib Prayer Alert',
+        arDesc: 'أذان منبثق',
+        enDesc: 'Pop-up Adhan'
+      },
+      alert_Isha: {
+        arTitle: 'تنبيه صلاة العشاء',
+        enTitle: 'Isha Prayer Alert',
+        arDesc: 'أذان منبثق',
+        enDesc: 'Pop-up Adhan'
+      }
+    };
+
+    ALERT_SETTING_KEYS.forEach(key => {
+      const enabled = isAlertEnabled(key);
+      const card = document.getElementById(`toggle-card-${key}`);
+      const titleEl = document.getElementById(`lbl-${key}`);
+      const subEl = document.getElementById(`sub-${key}`);
+      const info = meta[key];
+
+      if (card) {
+        if (enabled) card.classList.add('is-on');
+        else card.classList.remove('is-on');
+      }
+      if (titleEl && info) {
+        titleEl.innerText = (lang === 'en') ? info.enTitle : info.arTitle;
+      }
+      if (subEl && info) {
+        if (lang === 'en') {
+          subEl.innerText = `${enabled ? 'Enabled' : 'Disabled'} • ${info.enDesc}`;
+        } else {
+          subEl.innerText = `${enabled ? 'مفعل' : 'متوقف'} • ${info.arDesc}`;
+        }
+      }
+    });
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('appToast');
+    if (!toast) return;
+    toast.innerText = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2200);
+  }
 
   const SAUDI_CITIES_DB = [
     { ar: "حائل", en: "Hail", lat: 27.5114, lng: 41.7208 },
@@ -492,12 +748,17 @@
   };
 
   function startCountdown() {
+    const modal = document.getElementById('startupModal');
     const badge = document.getElementById('countdownBadge');
     const lang = document.documentElement.getAttribute('lang') || 'ar';
+    timeLeft = 20;
+    if (badge) badge.innerText = (lang === 'en') ? `${timeLeft}s remaining` : `${timeLeft} ثانية`;
+    if (modal) modal.style.display = 'flex';
+
     startupTimer = setInterval(() => {
       timeLeft--;
-      if(badge) badge.innerText = (lang === 'en') ? `${timeLeft}s remaining` : `${timeLeft} ثانية`;
-      if(timeLeft <= 0) { clearInterval(startupTimer); closeStartupModal(); }
+      if (badge) badge.innerText = (lang === 'en') ? `${timeLeft}s remaining` : `${timeLeft} ثانية`;
+      if (timeLeft <= 0) { clearInterval(startupTimer); closeStartupModal(); }
     }, 1000);
   }
 
@@ -506,385 +767,213 @@
     document.getElementById('startupModal').style.display = 'none';
   }
 
-  window.onload = function() {
-    startCountdown();
-    loadCustomButtons();
-    initLongPressHandlers();
-    initSwipeGestures();
-    initCompassSensor();
-    updateLiveClockAndDates();
-    
-    const cachedLat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
-    const cachedLng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
-    processOfflineLocation(cachedLat, cachedLng);
+  // Trigger Pop-up Smart Alert (Prayer Adhan or Morning/Evening Adhkar - 20s)
+  function triggerSmartAlert(type, prayerNameAr = 'الظهر') {
+    document.getElementById('settingsModal').style.display = 'none';
+    closeStartupModal();
+    clearInterval(smartAlertTimer);
 
-    startOfflineGPSWatcher();
-    
-    setInterval(updateLiveClockAndDates, 1000);
-    setInterval(() => {
-      const lat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
-      const lng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
-      processOfflineLocation(lat, lng);
-    }, 3600000);
-  };
-
-  function initCompassSensor() {
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', (event) => {
-        let alpha = event.alpha; // Compass heading
-        if (alpha !== null) {
-          let heading = Math.round(360 - alpha);
-          let compassText = `${heading}° `;
-          if (heading >= 337.5 || heading < 22.5) compassText += 'شمال';
-          else if (heading >= 22.5 && heading < 67.5) compassText += 'شمال شرق';
-          else if (heading >= 67.5 && heading < 112.5) compassText += 'شرق';
-          else if (heading >= 112.5 && heading < 157.5) compassText += 'جنوب شرق';
-          else if (heading >= 157.5 && heading < 202.5) compassText += 'جنوب';
-          else if (heading >= 202.5 && heading < 247.5) compassText += 'جنوب غرب';
-          else if (heading >= 247.5 && heading < 292.5) compassText += 'غرب';
-          else compassText += 'شمال غرب';
-
-          const compEl = document.getElementById('sideCompassDeg');
-          if (compEl) compEl.innerText = compassText;
-        }
-      }, true);
-    }
-  }
-
-  function initSwipeGestures() {
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const frame = document.getElementById('carFrame');
-
-    frame.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
-    frame.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchEndX - touchStartX;
-      const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
-
-      if (Math.abs(diff) > 80) {
-        if ((isRtl && diff < 0) || (!isRtl && diff > 0)) toggleSideScreen(true);
-        else toggleSideScreen(false);
-      }
-    }, false);
-  }
-
-  function toggleSideScreen(open) {
-    const side = document.getElementById('sideScreen');
-    if (open) side.classList.add('active');
-    else side.classList.remove('active');
-  }
-
-  let isPlaying = true;
-  let isMuted = false;
-  function togglePlayPause() { isPlaying = !isPlaying; alert(isPlaying ? 'استئناف تشغيل الوسائط' : 'إيقاف مؤقت للوسائط'); }
-  function toggleMuteAudio() { isMuted = !isMuted; alert(isMuted ? 'تم كتم الصوت (Mute)' : 'تم إلغاء الكتم'); }
-
-  let lastLocationUpdate = 0;
-
-  function startOfflineGPSWatcher() {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.watchPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        
-        if (position.coords.speed !== null && !isNaN(position.coords.speed)) {
-          const speedKmh = Math.round(position.coords.speed * 3.6);
-          document.getElementById('liveSpeedVal').innerText = speedKmh;
-        }
-
-        const now = Date.now();
-        if (now - lastLocationUpdate > 3600000 || lastLocationUpdate === 0) {
-          localStorage.setItem('last_lat', lat);
-          localStorage.setItem('last_lng', lng);
-          processOfflineLocation(lat, lng);
-          lastLocationUpdate = now;
-        }
-      },
-      (err) => { console.log("GPS standby:", err); },
-      { enableHighAccuracy: true, maximumAge: 5000 }
-    );
-  }
-
-  function processOfflineLocation(lat, lng) {
     const lang = document.documentElement.getAttribute('lang') || 'ar';
-    
-    let nearestCity = SAUDI_CITIES_DB[0];
-    let minDistance = Infinity;
+    const titleEl = document.getElementById('smartAlertTitle');
+    const textEl = document.getElementById('smartAlertText');
+    const btnEl = document.getElementById('smartAlertCloseBtn');
+    const badgeEl = document.getElementById('alertCountdownBadge');
 
-    SAUDI_CITIES_DB.forEach(city => {
-      const dist = Math.hypot(city.lat - lat, city.lng - lng);
-      if (dist < minDistance) { minDistance = dist; nearestCity = city; }
-    });
+    const prayerNamesEn = {
+      'الفجر': 'Fajr',
+      'الظهر': 'Dhuhr',
+      'العصر': 'Asr',
+      'المغرب': 'Maghrib',
+      'العشاء': 'Isha'
+    };
 
-    const cityName = (lang === 'en') ? nearestCity.en : nearestCity.ar;
-    document.getElementById('userLocationName').innerText = cityName;
+    if (type === 'adhan') {
+      if (lang === 'en') {
+        titleEl.innerText = `🕌 It is now time for ${prayerNamesEn[prayerNameAr] || prayerNameAr} Prayer`;
+        textEl.innerHTML = `«اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الْفَلَاحِ، اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، لَا إِلَهَ إِلَّا اللَّهُ»<br><span style="font-size:13px; color:var(--text-muted);">Allahu Akbar, Allahu Akbar • Time for Prayer</span>`;
+        btnEl.innerText = 'Dismiss Now';
+      } else {
+        titleEl.innerText = `🕌 حان الآن وقت صلاة ${prayerNameAr}`;
+        textEl.innerHTML = `«اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الْفَلَاحِ، اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، لَا إِلَهَ إِلَّا اللَّهُ»`;
+        btnEl.innerText = 'إغلاق فوري';
+      }
+    } else if (type === 'morning') {
+      if (lang === 'en') {
+        titleEl.innerText = '🌅 Morning Supplications (أذكار الصباح)';
+        textEl.innerHTML = `«أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ»<br><br>«اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ»`;
+        btnEl.innerText = 'Dismiss Now';
+      } else {
+        titleEl.innerText = '🌅 أذكار الصباح';
+        textEl.innerHTML = `«أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ»<br><br>«اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ»`;
+        btnEl.innerText = 'تقبل الله (إغلاق فوري)';
+      }
+    } else if (type === 'evening') {
+      if (lang === 'en') {
+        titleEl.innerText = '🌇 Evening Supplications (أذكار المساء)';
+        textEl.innerHTML = `«أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ»<br><br>«اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ»`;
+        btnEl.innerText = 'Dismiss Now';
+      } else {
+        titleEl.innerText = '🌇 أذكار المساء';
+        textEl.innerHTML = `«أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ»<br><br>«اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ»`;
+        btnEl.innerText = 'تقبل الله (إغلاق فوري)';
+      }
+    }
 
-    const qiblaAngle = OfflinePrayerEngine.calculateQibla(lat, lng);
-    document.getElementById('qiblaDirVal').innerText = `${qiblaAngle}° ↗`;
-    document.getElementById('sideQiblaDirVal').innerText = `${qiblaAngle}° ↗`;
+    smartAlertTimeLeft = 20;
+    badgeEl.innerText = (lang === 'en') ? `${smartAlertTimeLeft}s remaining` : `${smartAlertTimeLeft} ثانية`;
+    document.getElementById('smartAlertModal').style.display = 'flex';
 
-    const timings = OfflinePrayerEngine.calculate(lat, lng, new Date());
-    document.getElementById('time-Fajr').innerText = timings.Fajr;
-    document.getElementById('time-Dhuhr').innerText = timings.Dhuhr;
-    document.getElementById('time-Asr').innerText = timings.Asr;
-    document.getElementById('time-Maghrib').innerText = timings.Maghrib;
-    document.getElementById('time-Isha').innerText = timings.Isha;
-
-    calculateNextPrayerCountdown(timings);
-    highlightActivePrayer(timings);
+    smartAlertTimer = setInterval(() => {
+      smartAlertTimeLeft--;
+      badgeEl.innerText = (lang === 'en') ? `${smartAlertTimeLeft}s remaining` : `${smartAlertTimeLeft} ثانية`;
+      if (smartAlertTimeLeft <= 0) {
+        closeSmartAlert();
+      }
+    }, 1000);
   }
 
-  function calculateNextPrayerCountdown(timings) {
-    const now = new Date();
-    const currentMins = now.getHours() * 60 + now.getMinutes();
-    const toMins = t => { const p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
+  function closeSmartAlert() {
+    clearInterval(smartAlertTimer);
+    document.getElementById('smartAlertModal').style.display = 'none';
+  }
 
-    const prayerList = [
-      { name: 'الفجر (Fajr)', mins: toMins(timings.Fajr) },
-      { name: 'الظهر (Dhuhr)', mins: toMins(timings.Dhuhr) },
-      { name: 'العصر (Asr)', mins: toMins(timings.Asr) },
-      { name: 'المغرب (Maghrib)', mins: toMins(timings.Maghrib) },
-      { name: 'العشاء (Isha)', mins: toMins(timings.Isha) }
+  // Periodic check for scheduled Prayer Adhans & Morning/Evening Adhkar respecting user toggles
+  function checkScheduledNotifications() {
+    if (!latestCalculatedTimings) return;
+
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+    const toMins = t => {
+      if (!t || t === '--:--') return -1;
+      const p = t.split(':');
+      return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+    };
+
+    const prayers = [
+      { id: 'Fajr', settingKey: 'alert_Fajr', ar: 'الفجر', mins: toMins(latestCalculatedTimings.Fajr) },
+      { id: 'Dhuhr', settingKey: 'alert_Dhuhr', ar: 'الظهر', mins: toMins(latestCalculatedTimings.Dhuhr) },
+      { id: 'Asr', settingKey: 'alert_Asr', ar: 'العصر', mins: toMins(latestCalculatedTimings.Asr) },
+      { id: 'Maghrib', settingKey: 'alert_Maghrib', ar: 'المغرب', mins: toMins(latestCalculatedTimings.Maghrib) },
+      { id: 'Isha', settingKey: 'alert_Isha', ar: 'العشاء', mins: toMins(latestCalculatedTimings.Isha) }
     ];
 
-    let nextPr = prayerList[0];
-    let diff = -1;
-
-    for (let p of prayerList) {
-      if (p.mins > currentMins) { nextPr = p; diff = p.mins - currentMins; break; }
+    // 1. Check each individual prayer only if its toggle is enabled
+    for (const p of prayers) {
+      if (isAlertEnabled(p.settingKey) && p.mins !== -1 && currentMins === p.mins) {
+        const storageFlag = `alert_shown_adhan_${p.id}_${todayKey}`;
+        if (!localStorage.getItem(storageFlag)) {
+          localStorage.setItem(storageFlag, '1');
+          triggerSmartAlert('adhan', p.ar);
+          return;
+        }
+      }
     }
 
-    if (diff === -1) {
-      diff = (1440 - currentMins) + prayerList[0].mins;
-      nextPr = prayerList[0];
+    // 2. Check Morning Adhkar (15 mins after Fajr) only if alert_morning is enabled
+    const fajrMins = toMins(latestCalculatedTimings.Fajr);
+    if (isAlertEnabled('alert_morning') && fajrMins !== -1 && currentMins === fajrMins + 15) {
+      const morningFlag = `alert_shown_morning_${todayKey}`;
+      if (!localStorage.getItem(morningFlag)) {
+        localStorage.setItem(morningFlag, '1');
+        triggerSmartAlert('morning');
+        return;
+      }
     }
 
-    const hrs = Math.floor(diff / 60);
-    const mins = diff % 60;
-    const text = `باقي على صلاة ${nextPr.name}: ${hrs > 0 ? hrs + ' ساعة و ' : ''}${mins} دقيقة`;
-    document.getElementById('sideNextPrayerInfo').innerText = text;
+    // 3. Check Evening Adhkar (15 mins after Asr) only if alert_evening is enabled
+    const asrMins = toMins(latestCalculatedTimings.Asr);
+    if (isAlertEnabled('alert_evening') && asrMins !== -1 && currentMins === asrMins + 15) {
+      const eveningFlag = `alert_shown_evening_${todayKey}`;
+      if (!localStorage.getItem(eveningFlag)) {
+        localStorage.setItem(eveningFlag, '1');
+        triggerSmartAlert('evening');
+        return;
+      }
+    }
   }
 
+  window.onload = function() {
+    syncAlertTogglesUI();
+    syncClockFormatUI();
+
+    // Only show startup riding supplication if alert_startup is enabled
+// ... existing code ... -->
   function updateLiveClockAndDates() {
     const now = new Date();
     const lang = document.documentElement.getAttribute('lang') || 'ar';
+    const clockFormat = localStorage.getItem('clock_format') || '12';
     
     let hours = now.getHours();
     let minutes = now.getMinutes();
     minutes = minutes < 10 ? '0' + minutes : minutes;
     
-    let ampmStr = lang === 'ar' ? (hours >= 12 ? 'مساءً' : 'صباحاً') : (hours >= 12 ? 'PM' : 'AM');
-    let displayHours = hours % 12 || 12;
-    displayHours = displayHours < 10 ? '0' + displayHours : displayHours;
+    const ampmEl = document.getElementById('mainAmPm');
+    let timeStr = '';
 
-    const timeStr = `${displayHours}:${minutes}`;
+    if (clockFormat === '24') {
+      const hours24 = hours < 10 ? '0' + hours : hours;
+      timeStr = `${hours24}:${minutes}`;
+      if (ampmEl) {
+        ampmEl.innerText = '';
+        ampmEl.style.display = 'none';
+      }
+    } else {
+      let ampmStr = lang === 'ar' ? (hours >= 12 ? 'مساءً' : 'صباحاً') : (hours >= 12 ? 'PM' : 'AM');
+      let displayHours = hours % 12 || 12;
+      displayHours = displayHours < 10 ? '0' + displayHours : displayHours;
+      timeStr = `${displayHours}:${minutes}`;
+      if (ampmEl) {
+        ampmEl.innerText = ampmStr;
+        ampmEl.style.display = 'inline';
+      }
+    }
+
     document.getElementById('mainClock').innerText = timeStr;
-    document.getElementById('mainAmPm').innerText = ampmStr;
     document.getElementById('boClock').innerText = timeStr;
     document.getElementById('sideClock').innerText = timeStr;
 
     const optionsMiladi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const miladiStr = now.toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', optionsMiladi);
-    
-    try {
-      const hijriStr = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-ca-islamic' : 'en-US-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
-      document.getElementById('dateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
-      document.getElementById('sideDateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
-      document.getElementById('boDateHijri').innerText = hijriStr + (lang === 'ar' ? ' هـ' : ' AH');
-    } catch(e) {}
-
-    document.getElementById('dateMiladi').innerText = miladiStr;
-    document.getElementById('boDateMiladi').innerText = miladiStr;
-    document.getElementById('sideDateMiladi').innerText = miladiStr;
-  }
-
-  function highlightActivePrayer(timings) {
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-    const toMins = t => { const p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
-
-    const prayers = [
-      { name: 'Fajr', mins: toMins(timings.Fajr) },
-      { name: 'Dhuhr', mins: toMins(timings.Dhuhr) },
-      { name: 'Asr', mins: toMins(timings.Asr) },
-      { name: 'Maghrib', mins: toMins(timings.Maghrib) },
-      { name: 'Isha', mins: toMins(timings.Isha) }
-    ];
-
-    document.querySelectorAll('.p-item').forEach(el => el.classList.remove('active'));
-    let activePr = 'Isha';
-    for (let i = 0; i < prayers.length; i++) {
-      if (currentTime < prayers[i].mins) { activePr = i === 0 ? 'Isha' : prayers[i - 1].name; break; }
-    }
-    const el = document.getElementById(`p-item-${activePr}`);
-    if(el) el.classList.add('active');
-  }
-
-  function initLongPressHandlers() {
-    const customSlots = [
-      { key: 'btn1', defaultName: 'الراديو', defaultIcon: '📻' },
-      { key: 'btn2', defaultName: 'البلوتوث', defaultIcon: '📡' },
-      { key: 'btn5', defaultName: 'التطبيقات', defaultIcon: '📱' },
-      { key: 'map', defaultName: 'الخرائط', defaultIcon: '🧭' }
-    ];
-
-    customSlots.forEach(slot => {
-      const el = document.getElementById(slot.key === 'map' ? 'btn-slot-map' : `btn-slot-${slot.key.replace('btn','')}`);
-      if(!el) return;
-
-      let pressTimer;
-      let isLongPress = false;
-
-      const startPress = () => {
-        isLongPress = false;
-        pressTimer = setTimeout(() => { isLongPress = true; openAppPicker(slot.key); }, 1000);
-      };
-      const cancelPress = () => clearTimeout(pressTimer);
-
-      el.addEventListener('mousedown', startPress);
-      el.addEventListener('mouseup', cancelPress);
-      el.addEventListener('mouseleave', cancelPress);
-      el.addEventListener('touchstart', startPress);
-      el.addEventListener('touchend', cancelPress);
-
-      el.addEventListener('click', () => {
-        if (isLongPress) return;
-        const savedPkg = localStorage.getItem(`custom_pkg_${slot.key}`);
-        if(savedPkg) {
-          if(window.AndroidBridge && window.AndroidBridge.openApp) window.AndroidBridge.openApp(savedPkg);
-          else alert(`فتح التطبيق المربوط: ${savedPkg}`);
-        } else {
-          if(slot.key === 'map') alert('فتح خرائط HERE أوفلاين');
-          else alert(`فتح التطبيق الافتراضي: ${slot.defaultName}`);
-        }
-      });
-    });
-  }
-
-  function openAppPicker(key) { activeCustomKey = key; document.getElementById('appPickerModal').style.display = 'flex'; }
-  function closeAppPicker() { document.getElementById('appPickerModal').style.display = 'none'; activeCustomKey = null; }
-
-  function selectAppForButton(pkgName, appName, appIcon) {
-    if(!activeCustomKey) return;
-    localStorage.setItem(`custom_pkg_${activeCustomKey}`, pkgName);
-    localStorage.setItem(`custom_name_${activeCustomKey}`, appName);
-    localStorage.setItem(`custom_icon_${activeCustomKey}`, appIcon);
-
-    if(activeCustomKey === 'map') {
-      document.getElementById('mapTitle').innerText = appName;
-    } else {
-      document.getElementById(`icon-${activeCustomKey}`).innerText = appIcon;
-      document.getElementById(`label-${activeCustomKey}`).innerText = appName;
-    }
-    closeAppPicker();
-  }
-
-  function loadCustomButtons() {
-    ['btn1', 'btn2', 'btn5', 'map'].forEach(key => {
-      const name = localStorage.getItem(`custom_name_${key}`);
-      const icon = localStorage.getItem(`custom_icon_${key}`);
-      if(name && icon) {
-        if(key === 'map') document.getElementById('mapTitle').innerText = name;
-        else {
-          document.getElementById(`icon-${key}`).innerText = icon;
-          document.getElementById(`label-${key}`).innerText = name;
-        }
-      }
-    });
-  }
-
-  function toggleBlackout() {
-    const s = document.getElementById('blackoutScreen');
-    s.style.display = (s.style.display === 'flex') ? 'none' : 'flex';
-  }
-  function toggleDuaModal() {
-    const m = document.getElementById('duaModal');
-    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-  }
-  function toggleSettingsModal() {
-    const m = document.getElementById('settingsModal');
-    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-  }
-
-  function setThemeMode(mode) {
-    ['btnModeNight', 'btnModeDay', 'btnModeAuto'].forEach(id => document.getElementById(id).classList.remove('active'));
-    if(mode === 'night') {
-      document.documentElement.setAttribute('data-theme', 'night');
-      document.getElementById('btnModeNight').classList.add('active');
-    } else if(mode === 'day') {
-      document.documentElement.setAttribute('data-theme', 'day');
-      document.getElementById('btnModeDay').classList.add('active');
-    } else {
-      document.getElementById('btnModeAuto').classList.add('active');
-      const hour = new Date().getHours();
-      document.documentElement.setAttribute('data-theme', (hour >= 6 && hour < 18) ? 'day' : 'night');
-    }
-  }
-
+// ... existing code ... -->
   function setColorTheme(color, btn) {
     document.documentElement.setAttribute('data-color', color);
     btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
 
-  function setLanguage(lang) {
-    const html = document.documentElement;
-    document.getElementById('btnLangAr').classList.remove('active');
-    document.getElementById('btnLangEn').classList.remove('active');
+  function syncClockFormatUI() {
+    const format = localStorage.getItem('clock_format') || '12';
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    const btn12 = document.getElementById('btnClock12');
+    const btn24 = document.getElementById('btnClock24');
+    const lbl = document.getElementById('lblClockFormatSetting');
 
-    if(lang === 'en') {
-      html.setAttribute('dir', 'ltr');
-      html.setAttribute('lang', 'en');
-      document.getElementById('btnLangEn').classList.add('active');
-      document.getElementById('compLabel').innerText = 'QIBLA';
-      document.getElementById('locText').innerText = 'Location';
-      document.getElementById('updateText').innerText = 'Mode';
-      document.getElementById('liveStatus').innerText = 'Offline GPS';
-      document.getElementById('p1').innerText = 'Fajr';
-      document.getElementById('p2').innerText = 'Dhuhr';
-      document.getElementById('p3').innerText = 'Asr';
-      document.getElementById('p4').innerText = 'Maghrib';
-      document.getElementById('p5').innerText = 'Isha';
-      document.getElementById('lblDua').innerText = 'Supplications';
-      document.getElementById('lblBlackout').innerText = 'Blackout';
-      document.getElementById('lblSettings').innerText = 'Settings';
-      document.getElementById('speedUnit').innerText = 'km/h';
-      document.getElementById('mapSub').innerText = 'Offline GPS Active';
-      document.getElementById('mapHintBadge').innerText = '⚙️ Customize';
-      document.getElementById('sideQiblaText').innerText = 'Qibla Direction:';
-      document.getElementById('tipsBox').innerHTML = `💡 <strong>Usage Tip:</strong> Swipe left or right to access the quick side assistant screen. Long-press any button or map to customize.`;
-      document.getElementById('aboutBox').innerHTML = `<strong>Launcher Name:</strong> Lanishna<br>This work is dedicated for the sake of Allah and is not permitted for commercial use.`;
-    } else {
-      html.setAttribute('dir', 'rtl');
-      html.setAttribute('lang', 'ar');
-      document.getElementById('btnLangAr').classList.add('active');
-      document.getElementById('compLabel').innerText = 'القبلة';
-      document.getElementById('locText').innerText = 'الموقع';
-      document.getElementById('updateText').innerText = 'الوضع';
-      document.getElementById('liveStatus').innerText = 'أوفلاين ذاتي';
-      document.getElementById('p1').innerText = 'الفجر';
-      document.getElementById('p2').innerText = 'الظهر';
-      document.getElementById('p3').innerText = 'العصر';
-      document.getElementById('p4').innerText = 'المغرب';
-      document.getElementById('p5').innerText = 'العشاء';
-      document.getElementById('lblDua').innerText = 'الأدعية والأذكار';
-      document.getElementById('lblBlackout').innerText = 'وضع النوم';
-      document.getElementById('lblSettings').innerText = 'الإعدادات';
-      document.getElementById('speedUnit').innerText = 'كم/س';
-      document.getElementById('mapSub').innerText = 'GPS أوفلاين نشط';
-      document.getElementById('mapHintBadge').innerText = '⚙️ تخصيص';
-      document.getElementById('sideQiblaText').innerText = 'اتجاه القبلة:';
-      document.getElementById('tipsBox').innerHTML = `💡 <strong>تنبيه الاستخدام:</strong> اسحب يميناً أو يساراً في الشاشة للوصول لشاشة المساعد الجانبية السريعة. ولتغيير أي زر أو خريطة، اضغط مطولاً عليها.`;
+    if (lbl) {
+      lbl.innerText = (lang === 'en') ? 'Clock Format / نظام الساعة' : 'نظام الساعة / Clock Format';
+    }
+    if (btn12 && btn24) {
+      btn12.innerText = (lang === 'en') ? '12-Hour (12H)' : '12 ساعة (12H)';
+      btn24.innerText = (lang === 'en') ? '24-Hour (24H)' : '24 ساعة (24H)';
+      btn12.classList.toggle('active', format === '12');
+      btn24.classList.toggle('active', format === '24');
+    }
+  }
+
+  function setClockFormat(format) {
+    localStorage.setItem('clock_format', format);
+    syncClockFormatUI();
+    updateLiveClockAndDates();
+    const lang = document.documentElement.getAttribute('lang') || 'ar';
+    showToast(lang === 'en' ? `Clock Format: ${format}H` : `نظام الساعة: ${format} ساعة`);
+  }
+
+  function setLanguage(lang) {
+// ... existing code ... -->
       document.getElementById('aboutBox').innerHTML = `<strong>اسم اللانشر:</strong> لانشرنا<br>هذا العمل لوجه الله ولا أحلل استخدامه تجارياً، ويمكن الحصول عليه مجاناً من خلال الإنترنت. لطلب رابط التحميل تواصل على جوال <strong>00966556156525</strong> أو عبر التواصل الاجتماعي <strong>@turkiftalf</strong>.`;
     }
+    syncAlertTogglesUI();
+    syncClockFormatUI();
     updateLiveClockAndDates();
     const lat = parseFloat(localStorage.getItem('last_lat')) || 27.5114;
-    const lng = parseFloat(localStorage.getItem('last_lng')) || 41.7208;
-    processOfflineLocation(lat, lng);
-  }
-</script>
-</body>
-</html>
+// ... existing code ... -->
+```
